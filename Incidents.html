@@ -315,8 +315,12 @@
 
         const options = {
             title: 'Incidents Reported per Month',
-            curveType: 'function',
+            curveType: 'None',
             legend: { position: 'bottom' },
+             vAxis: {
+            title: 'Number of Incidents',
+            minValue: 0 // Ensure the Y-axis starts at zero
+        }
         };
 
         const chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
