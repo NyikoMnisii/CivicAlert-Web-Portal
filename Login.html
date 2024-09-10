@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Municipality Login</title>
+  <style>
+    body {
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f2f2f259;
+    background-image: url('CSS/background.jpg'); /* Replace with your image */
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 80%;
+    max-width: 1200px;
+    height: 80%;
+}
+
+.info {
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    margin-right: 40px;
+}
+
+.info h1 {
+    font-size: 48px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.info p {
+    font-size: 24px;
+}
+
+.login-card {
+    background-color: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(13px);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    color: #333;
+    width: 300px;
+    max-width: 100%;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px 0;
+    margin-bottom: 15px;
+    border: none;
+    border-bottom: 1px solid #000000;
+    border-radius: 0;
+    font-size: 16px;
+    background-color: transparent;
+}
+
+.login-card .forgot-password {
+    display: block;
+    margin-bottom: 15px;
+    color: #007BFF;
+    text-decoration: none;
+    font-size: 14px;
+    text-align: left;
+}
+
+.login-card .forgot-password:hover {
+    text-decoration: underline;
+}
+
+.login-button {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #ff99009f;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.login-button:hover {
+    background-color: #E68900;
+}
+  </style>
+</head>
+<body>
+  <div class="background-image"></div>
+  <div class="content">
+    <div class="info">
+      <h1>Civic Alert</h1>
+      <p>Taking Service Delivery To Another Level</p>
+    </div>
+    <div class="login-card">
+      <form id="loginForm">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}" maxlength="100" required>
+        
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=]).{8,}" maxlength="100" required>
+        
+        <a href="#" class="forgot-password">Forgot Password?</a>
+        
+        <button type="submit" class="login-button">Log In</button>
+      </form>
+      <div id="loginMessage" class="login-message"></div>
+    </div>
+  </div>
+  <script src="Scripts.js"></script>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js";
+    import { getDatabase, ref, get, child } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-database.js";
+    import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
+  
+    const firebaseConfig = {
+      apiKey: "AIzaSyDXpT6oe6SNKk0kHJLePqlMmLnd1kRSWT8",
+      authDomain: "civicalertoriginal.firebaseapp.com",
+      databaseURL: "https://civicalertoriginal-default-rtdb.firebaseio.com",
+      projectId: "civicalertoriginal",
+      storageBucket: "civicalertoriginal.appspot.com",
+      messagingSenderId: "858192785417",
+      appId: "1:858192785417:web:424b1bec909661ab29c8d8",
+      measurementId: "G-KJ0C1TE4JS"
+    };
+  
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const auth = getAuth(app);
+    
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const loginMessage = document.getElementById('loginMessage');
+      const dbRef = ref(database, 'Municipality/Agent');
+      
+      try {
+        const snapshot = await get(dbRef);
+        if (snapshot.exists()) {
+          const userData = snapshot.val();
+          if (userData.email === email && userData.password === password) { // Assuming passwords are stored in plain text, which is not secure
+            console.log('User logged in:', userData);
+            loginMessage.textContent = 'Login successful!';
+            loginMessage.style.color = 'green';
+            window.location.href = 'Dashboard.html'; // Example redirect
+          } else {
+            loginMessage.textContent = 'Error: Incorrect email or password';
+            loginMessage.style.color = 'red';
+          }
+        } else {
+          loginMessage.textContent = 'Error: User does not exist';
+          loginMessage.style.color = 'red';
+        }
+      } catch (error) {
+        console.error('Error logging in:', error);
+        loginMessage.textContent = 'Error: ' + error.message;
+        loginMessage.style.color = 'red';
+      }
+    });
+  </script>
+  
+</body>
+</html>
