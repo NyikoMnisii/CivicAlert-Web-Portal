@@ -136,7 +136,7 @@
       authDomain: "civicalertoriginal.firebaseapp.com",
       databaseURL: "https://civicalertoriginal-default-rtdb.firebaseio.com",
       projectId: "civicalertoriginal",
-      storageBucket: "civicalertoriginal.appspot.com",
+     storageBucket: "civicalertoriginal.appspot.com",
       messagingSenderId: "858192785417",
       appId: "1:858192785417:web:424b1bec909661ab29c8d8",
       measurementId: "G-KJ0C1TE4JS"
@@ -147,36 +147,56 @@
     const auth = getAuth(app);
     
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const loginMessage = document.getElementById('loginMessage');
-      const dbRef = ref(database, 'Municipality/Agent');
-      
-      try {
-        const snapshot = await get(dbRef);
-        if (snapshot.exists()) {
-          const userData = snapshot.val();
-          if (userData.email === email && userData.password === password) { // Assuming passwords are stored in plain text, which is not secure
-            console.log('User logged in:', userData);
-            loginMessage.textContent = 'Login successful!';
-            loginMessage.style.color = 'green';
-            window.location.href = 'Dashboard.html'; // Example redirect
+    e.preventDefault();
+
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const loginMessage = document.getElementById('loginMessage');
+    const dbRef = ref(database, 'Municipality'); // Reference to the root of users data
+
+    try {
+      const snapshot = await get(dbRef);
+      if (snapshot.exists()) {
+        const users = snapshot.val();
+
+        // Search for the logged-in user based on email and password
+        let loggedInUser = null;
+        for (const userKey in users) {
+          const userData = users[userKey];
+          if (userData.email === email && userData.password === password) {
+            loggedInUser = userData;
+            break;
+          }
+        }
+
+        if (loggedInUser) {
+          console.log('User logged in:', loggedInUser);
+          loginMessage.textContent = 'Login successful!';
+          loginMessage.style.color = 'green';
+
+          // Role-based redirection
+          if (loggedInUser.role === 'Admin') {
+            window.location.href = 'Dashboard.html'; // Redirect for Admin
+          } else if (loggedInUser.role === 'Unit') {
+            window.location.href = 'UnitsDashboard.html'; // Redirect for Unit users
           } else {
-            loginMessage.textContent = 'Error: Incorrect email or password';
+            loginMessage.textContent = 'Error: Unrecognized role';
             loginMessage.style.color = 'red';
           }
         } else {
-          loginMessage.textContent = 'Error: User does not exist';
+          loginMessage.textContent = 'Error: Incorrect email or password';
           loginMessage.style.color = 'red';
         }
-      } catch (error) {
-        console.error('Error logging in:', error);
-        loginMessage.textContent = 'Error: ' + error.message;
+      } else {
+        loginMessage.textContent = 'Error: User does not exist';
         loginMessage.style.color = 'red';
       }
-    });
+    } catch (error) {
+      console.error('Error logging in:', error);
+      loginMessage.textContent = 'Error: ' + error.message;
+      loginMessage.style.color = 'red';
+    }
+  });
   </script>
-  
 </body>
 </html>
