@@ -131,7 +131,7 @@ onAuthStateChanged(auth, (user) => {
                 specialization = 'Water';
                 break;
             case 'road@gmail.com':
-                specialization = 'Potholes';
+                specialization = 'Pothole';
                 break;
             // Add other cases for different specializations
             default:

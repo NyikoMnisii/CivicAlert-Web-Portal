@@ -129,7 +129,7 @@ async function fetchReports() {
     }
 }
 fetchReports();
-0
+
 
 document.getElementById('updateReportStatus').addEventListener('click', async () => {
     const reportId = document.getElementById('updateReportStatus').getAttribute('data-report-id');

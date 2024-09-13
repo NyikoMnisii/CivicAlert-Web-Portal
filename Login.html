@@ -144,60 +144,62 @@
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
+    document.getElementById('loginForm').addEventListener('click', async function() {
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const loginMessage = document.getElementById('loginMessage');
+      
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
 
-  const email = document.getElementById('email').value;
-  const password = document.getElementById('password').value;
-  const loginMessage = document.getElementById('loginMessage');
-  const dbRef = ref(database, 'Municipality'); // Reference to the root of users data
+        // Fetch user role from the database
+        const dbRef = ref(database, 'Municipality'); // Reference to the root of users data
+        const snapshot = await get(dbRef);
 
-  try {
-    const snapshot = await get(dbRef);
-    if (snapshot.exists()) {
-      const users = snapshot.val();
+        if (snapshot.exists()) {
+          const users = snapshot.val();
+          let loggedInUser = null;
 
-      // Search for the logged-in user based on email and password
-      let loggedInUser = null;
-      for (const userKey in users) {
-        const userData = users[userKey];
-        if (userData.email === email && userData.password === password) {
-          loggedInUser = userData;
-          break;
-        }
-      }
+          // Search for the logged-in user based on email
+          for (const userKey in users) {
+            const userData = users[userKey];
+            if (userData.email === email) {
+              loggedInUser = userData;
+              break;
+            }
+          }
 
-      if (loggedInUser) {
-        console.log('User logged in:', loggedInUser);
-        loginMessage.textContent = 'Login successful!';
-        loginMessage.style.color = 'green';
+          if (loggedInUser) {
+            console.log('User logged in:', loggedInUser);
+            loginMessage.textContent = `${user.email} Login successful!`;
+            loginMessage.style.color = 'green';
 
-        // Set the userId to the email
-        const userId = email;
-
-        // Role-based redirection
-        if (loggedInUser.role === 'Admin') {
-          window.location.href = `Dashboard.html?userid=${userId}`; // Redirect for Admin with userId
-        } else if (loggedInUser.role === 'Unit') {
-          window.location.href = `UnitsDashboard.html?userid=${userId}`; // Redirect for Unit users with userId
+            // Role-based redirection
+            if (loggedInUser.role === 'Admin') {
+              window.location.href = `Dashboard.html?userid=${email}`; // Redirect for Admin with userId
+            } else if (loggedInUser.role === 'Unit') {
+              window.location.href = `UnitsDashboard.html?userid=${email}`; // Redirect for Unit users with userId
+            } else {
+              loginMessage.textContent = 'Error: Unrecognized role';
+              loginMessage.style.color = 'red';
+            }
+          } else {
+            loginMessage.textContent = 'Error: User not found in database';
+            loginMessage.style.color = 'red';
+          }
         } else {
-          loginMessage.textContent = 'Error: Unrecognized role';
+          loginMessage.textContent = 'Error: Database is empty';
           loginMessage.style.color = 'red';
         }
-      } else {
-        loginMessage.textContent = 'Error: Incorrect email or password';
+      } catch (error) {
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        loginMessage.textContent = `Error: ${errorMessage}`;
         loginMessage.style.color = 'red';
       }
-    } else {
-      loginMessage.textContent = 'Error: User does not exist';
-      loginMessage.style.color = 'red';
-    }
-  } catch (error) {
-    console.error('Error logging in:', error);
-    loginMessage.textContent = 'Error: ' + error.message;
-    loginMessage.style.color = 'red';
-  }
-});
+    });
+
 
   </script>
 </body>
