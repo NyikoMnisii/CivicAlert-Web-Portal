@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <style>
-        /* styles.css */
+            /* styles.css */
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -90,7 +90,43 @@ h1 {
     padding: 10px !important;
     text-align: left !important;
 }
+/* Styling for the "View" button */
+button[data-toggle="modal"] {
+    background-color: #007bff; /* Bootstrap primary blue color */
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
+button[data-toggle="modal"]:hover {
+    background-color: #0056b3; /* Darker blue on hover */
+}
+
+button[data-toggle="modal"]:focus {
+    outline: none; /* Remove the outline on focus */
+}
+
+button[data-toggle="modal"]:active {
+    background-color: #003f7f; /* Even darker blue when active/clicked */
+}
+
+button[data-toggle="modal"]:disabled {
+    background-color: #cccccc; /* Gray for disabled button */
+    cursor: not-allowed;
+}
+
+/* Optional - add more styling for mobile responsiveness */
+@media (max-width: 768px) {
+    button[data-toggle="modal"] {
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+}
 </style>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

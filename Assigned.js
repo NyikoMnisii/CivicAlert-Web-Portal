@@ -118,33 +118,30 @@ function displayReports(reports) {
 
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        loggedInUser = user;
-        console.log('Logged in user:', loggedInUser.email); // Add this to log the logged-in user's email
+        const loggedInUser = user;
+        console.log('Logged in user:', loggedInUser.email); // Log the logged-in user's email
 
-        // Assign specialization based on the user's email
-        let specialization = '';
-        switch (loggedInUser.email) {
-            case 'eskom@gmail.com':
-                specialization = 'Electricity';
-                break;
-            case 'water@gmail.com':
-                specialization = 'Water';
-                break;
-            case 'road@gmail.com':
-                specialization = 'Pothole';
-                break;
-            // Add other cases for different specializations
-            default:
-                console.log('No specialization found for the user.');
-                break;
+        // Use an object to map emails to specializations
+        const specializationMap = {
+            'eskom@gmail.com': 'Electricity',
+            'water@gmail.com': 'Water',
+            'road@gmail.com': 'Pothole',
+            // Add other email-to-specialization mappings here
+        };
+
+        const specialization = specializationMap[loggedInUser.email] || null;
+        console.log('Specialization assigned:', specialization);
+
+        if (specialization) {
+            fetchReports(specialization);
+        } else {
+            console.log('No specialization found for the user.');
         }
-
-        console.log('Specialization:', specialization); // Log the specialization
-        fetchReports(specialization); // Fetch reports after specialization is set
     } else {
         console.log('No user is signed in.');
     }
 });
+
 
 async function fetchReports(specialization) {
     const dbRef = ref(db);
@@ -153,6 +150,9 @@ async function fetchReports(specialization) {
         if (snapshot.exists()) {
             const reports = snapshot.val();
             console.log('All reports:', reports); // Log all the reports to verify the data
+
+            // Log the specialization being used
+            console.log('Specialization to filter by:', specialization);
 
             // Filter reports based on status and user specialization
             const filteredReports = Object.fromEntries(
@@ -171,6 +171,7 @@ async function fetchReports(specialization) {
         console.error('Error fetching reports:', error.message);
     }
 }
+
 
 
 

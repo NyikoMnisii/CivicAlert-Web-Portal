@@ -130,21 +130,22 @@
     import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js";
 
     const firebaseConfig = {
-    apiKey: "AIzaSyDXpT6oe6SNKk0kHJLePqlMmLnd1kRSWT8",
-    authDomain: "civicalertoriginal.firebaseapp.com",
-    databaseURL: "https://civicalertoriginal-default-rtdb.firebaseio.com",
-    projectId: "civicalertoriginal",
-    storageBucket: "civicalertoriginal.appspot.com",
-    messagingSenderId: "858192785417",
-    appId: "1:858192785417:web:424b1bec909661ab29c8d8",
-    measurementId: "G-KJ0C1TE4JS"
-};
+      apiKey: "AIzaSyDXpT6oe6SNKk0kHJLePqlMmLnd1kRSWT8",
+      authDomain: "civicalertoriginal.firebaseapp.com",
+      databaseURL: "https://civicalertoriginal-default-rtdb.firebaseio.com",
+      projectId: "civicalertoriginal",
+      storageBucket: "civicalertoriginal.appspot.com",
+      messagingSenderId: "858192785417",
+      appId: "1:858192785417:web:424b1bec909661ab29c8d8",
+      measurementId: "G-KJ0C1TE4JS"
+    };
     
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const database = getDatabase(app);
 
-    document.getElementById('loginForm').addEventListener('click', async function() {
+    document.getElementById('loginForm').addEventListener('submit', async function(event) {
+      event.preventDefault(); // Prevent form from submitting and refreshing the page
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
       const loginMessage = document.getElementById('loginMessage');
@@ -199,8 +200,6 @@
         loginMessage.style.color = 'red';
       }
     });
-
-
   </script>
 </body>
 </html>
